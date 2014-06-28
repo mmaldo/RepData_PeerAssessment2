@@ -1,0 +1,78 @@
+Impacts from Severe Weather Events
+========================================================
+## Synopsis
+This analysis will look at different weather events types across the United States. The goal is determine the economic impact of weather events and also the impact on population health. The data used for this anlysis is from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database.
+
+## Data Processing
+The data was first read in from the original bz2 file. The function exp_factor converted the differnt letters and numbers in the CROPDMGEXP and PROPDMGEXP to actual assumed representations and were multiplied with CROPDMG and PROPDMG to convert them to their original values. Here we assume a number means to multiply the damge by ten to the power of that number. We also asumme "B" stands for billion, "M" statnds for million, "K" stands for Kilo or 1,000, and "H" is 100 or hecto.
+A table called populationHealth was made that summed the total injuries, total fatalities and total casualties for each EVTYPE. Another table called economicHealth was made that summed the total property damage, total crop damage and total damage for each EVTYPE. These tables were then arranged in descending order by total damage for economicHealth and casualties for population health.
+
+```{r CACHE=FALSE}
+library(plyr)
+library(dplyr)
+library(stringr)
+library(data.table)
+library(ggplot2)
+library(knitr)
+
+stormData<-bzfile("repdata-data-StormData.csv.bz2", open = "r")
+
+stormData<-read.csv(stormData)
+
+exp_factor <- function(x){suppressWarnings(
+                       ifelse(x %in% as.character(0:8), 10^as.numeric(x),
+                       ifelse(x %in% c("b","B"), 10^9,    # billion
+                       ifelse(x %in% c("m","M"), 10^6,    # million/mega
+                       ifelse(x %in% c("k","K"), 10^3,    # kilo   
+                       ifelse(x %in% c("h","H"), 10^2,    # hecto
+                       1))))))
+                      }
+
+stormData$PROPDMG<-exp_factor(stormData$PROPDMGEXP)*stormData$PROPDMG
+
+stormData$CROPDMG<-exp_factor(stormData$CROPDMGEXP)*stormData$CROPDMG
+
+populationHealth<-ddply(stormData,.(EVTYPE),summarise,TOTALINJURIES=sum(INJURIES),TOTALFATALITIES=sum(FATALITIES),CASUALTIES=sum(FATALITIES)+sum(INJURIES))
+
+populationHealth<-arrange(populationHealth, desc(CASUALTIES))
+economicHealth<-ddply(stormData,.(EVTYPE),summarise,TOTALPROPDMG=sum(PROPDMG),TOTALCROPDMG=sum(CROPDMG),TOTAL=sum(CROPDMG)+sum(PROPDMG))
+
+
+economicHealth<-arrange(economicHealth, desc(TOTAL))
+
+fiveEconomicHealth<-head(economicHealth,5)
+
+fiveEconomicHealth[grep("THUNDERSTORM WINDS",fiveEconomicHealth$EVTYPE),]$EVTYPE<-"THUNDERSTORM WIND"
+
+fivePopulationHealth<-head(populationHealth,5)
+
+fivePopulationHealth[grep("TSTM WIND",fivePopulationHealth$EVTYPE),]$EVTYPE<-"THUNDERSTORM WIND"
+```
+
+## Results
+### Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+
+Here are the top five most harmul to the population. Tornados seem to do the most damage to the population. 
+```{r,results='asis'}
+kable(fivePopulationHealth)
+```
+
+```{r fig.width=15}
+ggplot(fivePopulationHealth,aes(x=EVTYPE,y=CASUALTIES,fill=factor(EVTYPE)))+geom_bar(stat="identity")+xlab("Event")+ylab("Casualties")+labs(fill= "Event Type")
+```
+### Across the United States, which types of events have the greatest economic consequences?
+Here are the top five most harmul in terms of economic damage. Flash floods seem to do the most damage to the economy.
+
+```{r, results='asis'}
+kable(fiveEconomicHealth)
+```
+
+```{r, fig.width=15}
+
+ggplot(fiveEconomicHealth,aes(x=EVTYPE,y=TOTAL,fill=factor(EVTYPE)))+geom_bar(stat="identity")+xlab("Event")+ylab("Total Damage(US Dollars)")+labs(fill="Event Type")
+```
+
+
+
+
+
