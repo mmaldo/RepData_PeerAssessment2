@@ -16,6 +16,6 @@ The documentation of the database available. Here you will find how some of the 
 
 [National Climatic Data Center Storm Events FAQ](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf)
 
-I have included the data in the repository. You may also download it if you wish from teh following link.
+I have included the data in the repository. You may also download it if you wish from the following link.
 
 [Storm Data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2)
