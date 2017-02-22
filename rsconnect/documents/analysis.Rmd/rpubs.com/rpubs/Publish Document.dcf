@@ -1,8 +1,0 @@
-name: Publish Document
-title:
-account: rpubs
-server: rpubs.com
-appId: https://api.rpubs.com/api/v1/document/252597/899c28ebfecb4a6780c92ac8c7676934
-bundleId: https://api.rpubs.com/api/v1/document/252597/899c28ebfecb4a6780c92ac8c7676934
-url: http://rpubs.com/hawk24/252597
-when: 1487748660.25307
