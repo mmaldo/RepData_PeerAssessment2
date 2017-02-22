@@ -5,7 +5,7 @@ RepData_PeerAssessment2
 The goal of this analysis was to identify to most damaging severe weather events across the US. You can view the full report on RPubs at the following link.
 
 
-[R Publication](http://rpubs.com/hawk24/252597)
+[R Publication](http://rpubs.com/mmaldo/252623)
 
 
 ## Data
