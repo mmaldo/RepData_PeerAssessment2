@@ -1,11 +1,13 @@
 Impacts from Severe Weather Events
 ========================================================
 ## Synopsis
-This analysis will look at different weather events types across the United States. The goal is determine the economic impact of weather events and also the impact on population health. The data used for this anlysis is from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database.
+This analysis will look at different weather events types across the United States. The goal is to determine the economic impact of weather events and the impact on population health. The data used for this analysis is from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database.
 
 ## Data Processing
-The data was first read in from the original bz2 file. The function exp_factor converted the differnt letters and numbers in the CROPDMGEXP and PROPDMGEXP to actual assumed representations and were multiplied with CROPDMG and PROPDMG to convert them to their original values. Here we assume a number means to multiply the damge by ten to the power of that number. We also asumme "B" stands for billion, "M" statnds for million, "K" stands for Kilo or 1,000, and "H" is 100 or hecto.
-A table called populationHealth was made that summed the total injuries, total fatalities and total casualties for each EVTYPE. Another table called economicHealth was made that summed the total property damage, total crop damage and total damage for each EVTYPE. These tables were then arranged in descending order by total damage for economicHealth and casualties for population health.
+The data was first read in from the original bz2 file. The function exp_factor converted the different representations of the numbers in the CROPDMGEXP and PROPDMGEXP to actual representations of the numbers. They were then multiplied with CROPDMG and PROPDMG to convert them to their original values. As an example, the process I followed if there was just a number in PROPDMGEXP or CROPDMGEXP was to multiply the damage by ten to the power of that number. I also assumed in the PROPDMGEXP and CROPDMGEXP columns that "B" stands for billion, "M" stands for million, "K" stands for kilo(1,000), and "H" is hecto(100). This information was also used to multiply the CROPDMG and PROPDMG by the respective representations.
+
+A table called populationHealth was made that summed the total injuries, total fatalities and total casualties for each EVTYPE. Another table called economicHealth was made that summed the total property damage, total crop damage and total damage for each EVTYPE. These tables were then arranged in descending order by total damage for economicHealth and casualties for populationHealth.
+
 
 ```{r CACHE=FALSE}
 library(plyr)
@@ -52,7 +54,7 @@ fivePopulationHealth[grep("TSTM WIND",fivePopulationHealth$EVTYPE),]$EVTYPE<-"TH
 ## Results
 ### Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
 
-Here are the top five most harmul to the population. Tornados seem to do the most damage to the population. 
+Here are the top five most harmful to the population. Tornados seem to do the most damage to the population. 
 ```{r,results='asis'}
 kable(fivePopulationHealth)
 ```
@@ -62,7 +64,7 @@ ggplot(fivePopulationHealth,aes(x=EVTYPE,y=CASUALTIES,fill=factor(EVTYPE)))+geom
 ```
 
 ### Across the United States, which types of events have the greatest economic consequences?
-Here are the top five most harmul in terms of economic damage. Flash floods seem to do the most damage to the economy.
+Here are the top five most harmful in terms of economic damage. Flash floods seem to do the most damage to the economy.
 
 ```{r, results='asis'}
 kable(fiveEconomicHealth)
